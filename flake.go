@@ -137,6 +137,11 @@ func (sf *Flake) Next() (string, error) {
 	return r[0], nil
 }
 
+// NextN generates the next n flake ids
+func (sf *Flake) NextN(n int) ([]string, error) {
+	return sf.generateHexIds(n)
+}
+
 // NewFlake creates a new instance of a flake id generator
 func NewFlake() *Flake {
 	return &Flake{workerID: DefaultWorkID(), lastTimestamp: -1}

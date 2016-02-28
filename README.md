@@ -7,14 +7,31 @@ Read the original [post](http://boundary.com/blog/2012/01/12/flake-a-decentraliz
 
 To get started
 
-	go get -u github.com/casualjim/flakeid
+	go get -u github.com/casualjim/flakeid/cmd/...
 
 # Deployment
+
+Run a server
+
+```shell
+flakeid-server &
+```
 
 Example usage from your application.
 
 ```go
-id := flakeid.MustNewID()
+idGenerator, err := flakeid.NewClient("tcp", "[::1]:3525", true)
+if err != nil {
+	log.Fatalln(err)
+}
+defer idGenerator.Close()
+
+ids, err := idGenerator.NextN(1)
+if err != nil {
+	log.Fatalln(err)
+}
+
+fmt.Println(string(ids))
 ```
 
 # Anatomy

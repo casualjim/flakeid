@@ -1,4 +1,4 @@
-package flake
+package flakeid
 
 import (
 	"testing"

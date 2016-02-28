@@ -2,7 +2,7 @@
 github.com/boundary/flake in golang
 */
 
-package flake
+package flakeid
 
 import (
 	"encoding/binary"

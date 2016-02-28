@@ -14,7 +14,7 @@ To get started
 Example usage from your application.
 
 ```go
-id := flake.MustNewID()
+id := flakeid.MustNewID()
 ```
 
 # Anatomy

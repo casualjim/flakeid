@@ -1,0 +1,30 @@
+clone:
+  path: github.com/casualjim/flakeid
+
+build:
+  integration:
+    image: golang:1.6
+    pull: true
+    environment:
+      GOCOVMODE: "count"
+    commands:
+      - go get -u github.com/axw/gocov/gocov
+      - go get -u gopkg.in/matm/v1/gocov-html
+      - go get -u github.com/cee-dub/go-junit-report
+      - go get -u github.com/jessevdk/go-flags
+      - go get -u github.com/stretchr/testify/assert
+      - mkdir -p /drone/testresults
+      - mkdir -p /drone/coverage
+      - mkdir -p /drone/dist
+      - go test -race -timeout 20m -v .
+      - go test -v -covermode="${GOCOVMODE-count}" -coverprofile="profile.cov" .
+      - go tool cover -func profile.cov
+      - gocov convert profile.cov | gocov report
+      - gocov convert profile.cov | gocov-html > /drone/coverage/coverage-${CI_BUILD_NUM-"0"}.html
+
+# publish:
+#   coverage:
+#     server: https://coverage.vmware.run
+#     token: $$GITHUB_TOKEN
+#     # threshold: 70
+#     # must_increase: true

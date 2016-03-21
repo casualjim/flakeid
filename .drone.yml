@@ -17,10 +17,10 @@ build:
       - mkdir -p /drone/coverage
       - mkdir -p /drone/dist
       - go test -race -timeout 20m -v .
-      - go test -v -covermode="${GOCOVMODE-count}" -coverprofile="profile.cov" .
-      - go tool cover -func profile.cov
-      - gocov convert profile.cov | gocov report
-      - gocov convert profile.cov | gocov-html > /drone/coverage/coverage-${CI_BUILD_NUM-"0"}.html
+      - go test -cover -coverprofile coverage.out -covermode="${GOCOVMODE-count}" .
+      - go tool cover -func coverage.out
+      - gocov convert coverage.out | gocov report
+      - gocov convert coverage.out | gocov-html > /drone/coverage/coverage-${CI_BUILD_NUM-"0"}.html
 
 publish:
   coverage:

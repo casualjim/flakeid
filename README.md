@@ -1,13 +1,14 @@
 # Flake: A decentralized, k-ordered id generation service in Golang
 
-
 Flake produces 128-bit, k-ordered ids (read time-ordered lexically). Run one on each node in your infrastructure and they will generate conflict-free ids on-demand without coordination.
 
 Read the original [post](http://boundary.com/blog/2012/01/12/flake-a-decentralized-k-ordered-unique-id-generator-in-erlang/) on the Boundary blog.
 
 To get started
 
-	go get -u github.com/casualjim/flakeid/cmd/...
+```
+go get -u github.com/casualjim/flakeid/cmd/...
+```
 
 # Deployment
 
@@ -22,13 +23,13 @@ Example usage from your application.
 ```go
 idGenerator, err := flakeid.NewClient("tcp", "[::1]:3525", true)
 if err != nil {
-	log.Fatalln(err)
+    log.Fatalln(err)
 }
 defer idGenerator.Close()
 
 ids, err := idGenerator.NextN(1)
 if err != nil {
-	log.Fatalln(err)
+    log.Fatalln(err)
 }
 
 fmt.Println(string(ids))
@@ -38,17 +39,15 @@ fmt.Println(string(ids))
 
 Flake ids are 128-bits wide described here from most significant to least significant bits.
 
-* 64-bit timestamp - milliseconds since the epoch (Jan 1 1970)
-* 48-bit worker id - MAC address from a configurable device
-* 16-bit sequence # - usually 0, incremented when more than one id is requested in the same millisecond and reset to 0 when the clock ticks forward
-
+- 64-bit timestamp - milliseconds since the epoch (Jan 1 1970)
+- 48-bit worker id - MAC address from a configurable device
+- 16-bit sequence # - usually 0, incremented when more than one id is requested in the same millisecond and reset to 0 when the clock ticks forward
 
 # Roadmap
 
-* Bulk id generation
-* HTTP interface
-* Client library (Golang, possibly others)
-
+- Bulk id generation
+- HTTP interface
+- Client library (Golang, possibly others)
 
 # Frequently Asked Questions
 

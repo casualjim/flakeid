@@ -125,7 +125,7 @@ type Flake struct {
 	lastTimestamp int64
 	workerID      uint64
 	sequence      uint64
-	lock          sync.RWMutex
+	lock          *sync.Mutex
 }
 
 // Next generates the next flake id
@@ -144,11 +144,11 @@ func (sf *Flake) NextN(n int) ([]string, error) {
 
 // NewFlake creates a new instance of a flake id generator
 func NewFlake() *Flake {
-	return &Flake{workerID: DefaultWorkID(), lastTimestamp: -1}
+	return &Flake{workerID: DefaultWorkID(), lastTimestamp: -1, lock: new(sync.Mutex)}
 }
 
 func timestamp() int64 {
-	return time.Now().UnixNano() / nano
+	return time.Now().Unix()
 }
 
 func tilNextMillis(ts int64) int64 {

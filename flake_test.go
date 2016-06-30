@@ -25,3 +25,48 @@ func TestFlakeIdGenerator(t *testing.T) {
 
 	assert.Len(t, data, total)
 }
+
+/*
+func TestConcurrentFlakeIdGenerator(t *testing.T) {
+	result := make(chan []string)
+	done := make(chan [][]string)
+	runtime.GOMAXPROCS(4)
+	const (
+		nrIDs     = 10000
+		nrWorkers = 500
+	)
+
+	go func() {
+		var res [][]string
+		for vv := range result {
+			res = append(res, vv)
+		}
+		done <- res
+	}()
+
+	for i := 0; i < nrWorkers; i++ {
+		go func() {
+			var partial []string
+			for j := 0; j < nrIDs; j++ {
+				partial = append(partial, MustNewID())
+			}
+			result <- partial
+		}()
+	}
+
+	collected := <-done
+	set := make(map[string]struct{})
+	assert.Len(t, collected, nrWorkers)
+	for _, part := range collected {
+		assert.Len(t, part, nrIDs)
+		for _, id := range part {
+			_, known := set[id]
+			if known {
+				t.Log("found a duplicate ID!!!!")
+				t.FailNow()
+			}
+			set[id] = struct{}{}
+		}
+	}
+}
+*/

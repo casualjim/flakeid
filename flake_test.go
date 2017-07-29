@@ -1,6 +1,7 @@
 package flakeid
 
 import (
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -26,11 +27,9 @@ func TestFlakeIdGenerator(t *testing.T) {
 	assert.Len(t, data, total)
 }
 
-/*
 func TestConcurrentFlakeIdGenerator(t *testing.T) {
-	result := make(chan []string)
+	result := make(chan []string, 500)
 	done := make(chan [][]string)
-	runtime.GOMAXPROCS(4)
 	const (
 		nrIDs     = 10000
 		nrWorkers = 500
@@ -42,10 +41,14 @@ func TestConcurrentFlakeIdGenerator(t *testing.T) {
 			res = append(res, vv)
 		}
 		done <- res
+		close(done)
 	}()
 
+	var wg sync.WaitGroup
 	for i := 0; i < nrWorkers; i++ {
+		wg.Add(1)
 		go func() {
+			defer wg.Done()
 			var partial []string
 			for j := 0; j < nrIDs; j++ {
 				partial = append(partial, MustNewID())
@@ -53,6 +56,11 @@ func TestConcurrentFlakeIdGenerator(t *testing.T) {
 			result <- partial
 		}()
 	}
+
+	go func() {
+		wg.Wait()
+		close(result)
+	}()
 
 	collected := <-done
 	set := make(map[string]struct{})
@@ -69,4 +77,3 @@ func TestConcurrentFlakeIdGenerator(t *testing.T) {
 		}
 	}
 }
-*/

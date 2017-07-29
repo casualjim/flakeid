@@ -104,7 +104,11 @@ func (sf *Flake) generateIds(count int) ([]id, error) {
 }
 
 // DefaultGenerator for flake ids
-var DefaultGenerator = NewFlake()
+var DefaultGenerator *Flake
+
+func init() {
+	DefaultGenerator = NewFlake()
+}
 
 // MustNewID creates a new ID or panics when a failure occurs
 func MustNewID() string {
@@ -125,7 +129,7 @@ type Flake struct {
 	lastTimestamp int64
 	workerID      uint64
 	sequence      uint64
-	lock          *sync.Mutex
+	lock          sync.Mutex
 }
 
 // Next generates the next flake id
@@ -144,11 +148,11 @@ func (sf *Flake) NextN(n int) ([]string, error) {
 
 // NewFlake creates a new instance of a flake id generator
 func NewFlake() *Flake {
-	return &Flake{workerID: DefaultWorkID(), lastTimestamp: -1, lock: new(sync.Mutex)}
+	return &Flake{workerID: DefaultWorkID(), lastTimestamp: -1}
 }
 
 func timestamp() int64 {
-	return time.Now().Unix()
+	return time.Now().UnixNano() / nano
 }
 
 func tilNextMillis(ts int64) int64 {

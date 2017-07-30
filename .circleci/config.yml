@@ -1,0 +1,38 @@
+version: 2
+jobs:
+  build:
+    working_directory: /go/src/github.com/casualjim/flakeid
+    docker:
+      - image: golang:1.8
+    environment:
+      TEST_RESULTS: /tmp/test-results
+
+    steps:
+      - checkout
+      - run: mkdir -p $TEST_RESULTS
+      
+      - run: 
+          name: Install go tools
+          command: |
+            go get -u github.com/jstemmer/go-junit-report
+            go get -u github.com/jessevdk/go-flags
+            go get -u github.com/stretchr/testify/assert
+      
+      - run:
+          name: Run the tests
+          command: |
+            trap "go-junit-report <${TEST_RESULTS}/go-test.out > ${TEST_RESULTS}/go-test-report.xml" EXIT
+            go test -race -timeout 20m -v . | tee ${TEST_RESULTS}/go-test.out
+            go test -cover -coverprofile coverage.txt -covermode=atomic            
+          no_output_timeout: 30m
+      
+      - run:
+          name: Submit coverage results
+          command: bash <(curl -s https://codecov.io/bash)
+      
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: raw-test-output
+      
+      - store_test_results:
+          path: /tmp/test-results

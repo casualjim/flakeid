@@ -10,7 +10,15 @@ To get started
 go get -u github.com/casualjim/flakeid/cmd/...
 ```
 
-# Deployment
+## Deployment
+
+### Local usage
+
+```go
+id := flakeid.MustNewID()
+```
+
+### Server/Client usage
 
 Run a server
 
@@ -35,7 +43,7 @@ if err != nil {
 fmt.Println(string(ids))
 ```
 
-# Anatomy
+## Anatomy
 
 Flake ids are 128-bits wide described here from most significant to least significant bits.
 
@@ -43,13 +51,11 @@ Flake ids are 128-bits wide described here from most significant to least signif
 - 48-bit worker id - MAC address from a configurable device
 - 16-bit sequence # - usually 0, incremented when more than one id is requested in the same millisecond and reset to 0 when the clock ticks forward
 
-# Roadmap
+## Roadmap
 
-- Bulk id generation
 - HTTP interface
-- Client library (Golang, possibly others)
 
-# Frequently Asked Questions
+### Frequently Asked Questions
 
 **How does this differ from snowflake developed at Twitter?**
 
